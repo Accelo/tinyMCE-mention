@@ -269,6 +269,12 @@
             $.each(items, function (i, item) {
                 var $element = $(_this.render(item, i));
 
+				var textNodes = $element.find('*').andSelf().contents().filter(function() {
+					return this.nodeType === 3; //Node.TEXT_NODE
+				}).each(function(index, element) {
+					$(element).parent().html(_this.highlighter(element.textContent));
+				});
+
                 $element.html($element.html().replace($element.text(), _this.highlighter($element.text())));
 
                 $.each(items[i], function (key, val) {
