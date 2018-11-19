@@ -184,7 +184,18 @@
         },
 
         lookup: function () {
-            this.query = $.trim($(this.editor.getBody()).find('#autocomplete-searchtext').text()).replace('\ufeff', '');
+			var body = $(this.editor.getBody());
+			var autoCompleteSearchText = body.find('#autocomplete-searchtext');
+			this.query = $.trim(autoCompleteSearchText.text()).replace('\ufeff', '');
+			if (this.query === '') {
+				var autoComplete = body.find('#autocomplete');
+				if (autoComplete.length) {
+					autoCompleteSearchText.appendTo(autoComplete);
+					this.editor.selection.select(autoCompleteSearchText.find('span')[0]);
+				} else {
+					this.cleanUp(true);
+				}
+			}
 
             if (this.$dropdown === undefined) {
                 this.show();
