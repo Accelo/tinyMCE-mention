@@ -264,7 +264,11 @@
 
             items = _this.sorter(items);
 
-            items = items.slice(0, this.options.items);
+			if (this.options.items === -1) {
+				items = items.slice();
+			} else {
+				items = items.slice(0, this.options.items);
+			}
 
             $.each(items, function (i, item) {
                 var $element = $(_this.render(item, i));
