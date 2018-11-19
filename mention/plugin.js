@@ -184,7 +184,18 @@
         },
 
         lookup: function () {
-            this.query = $.trim($(this.editor.getBody()).find('#autocomplete-searchtext').text()).replace('\ufeff', '');
+			var body = $(this.editor.getBody());
+			var autoCompleteSearchText = body.find('#autocomplete-searchtext');
+			this.query = $.trim(autoCompleteSearchText.text()).replace('\ufeff', '');
+			if (this.query === '') {
+				var autoComplete = body.find('#autocomplete');
+				if (autoComplete.length) {
+					autoCompleteSearchText.appendTo(autoComplete);
+					this.editor.selection.select(autoCompleteSearchText.find('span')[0]);
+				} else {
+					this.cleanUp(true);
+				}
+			}
 
             if (this.$dropdown === undefined) {
                 this.show();
@@ -253,10 +264,20 @@
 
             items = _this.sorter(items);
 
-            items = items.slice(0, this.options.items);
+			if (this.options.items === -1) {
+				items = items.slice();
+			} else {
+				items = items.slice(0, this.options.items);
+			}
 
             $.each(items, function (i, item) {
                 var $element = $(_this.render(item, i));
+
+				var textNodes = $element.find('*').andSelf().contents().filter(function() {
+					return this.nodeType === 3; //Node.TEXT_NODE
+				}).each(function(index, element) {
+					$(element).parent().html(_this.highlighter(element.textContent));
+				});
 
                 $element.html($element.html().replace($element.text(), _this.highlighter($element.text())));
 
@@ -269,6 +290,7 @@
 
             if (result.length) {
                 this.$dropdown.html(result.join('')).show();
+				this.highlightNextResult();
             } else {
                 this.$dropdown.hide();
                 this.$dropdown.find('li').removeClass('active');
