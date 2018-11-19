@@ -286,6 +286,7 @@
 
             if (result.length) {
                 this.$dropdown.html(result.join('')).show();
+				this.highlightNextResult();
             } else {
                 this.$dropdown.hide();
                 this.$dropdown.find('li').removeClass('active');
