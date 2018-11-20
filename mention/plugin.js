@@ -322,6 +322,7 @@
                 index = (currentIndex === 0) ? this.$dropdown.find('li').length - 1 : --currentIndex;
 
             this.$dropdown.find('li').removeClass('active').eq(index).addClass('active');
+            this.scrollItemIntoView(index);
         },
 
         highlightNextResult: function () {
@@ -329,7 +330,13 @@
                 index = (currentIndex === this.$dropdown.find('li').length - 1) ? 0 : ++currentIndex;
 
             this.$dropdown.find('li').removeClass('active').eq(index).addClass('active');
+			this.scrollItemIntoView(index);
         },
+
+		scrollItemIntoView: function(index) {
+			var listItems = this.$dropdown.find('li');
+			this.$dropdown.scrollTop(listItems.eq(index).position().top - listItems.eq(0).position().top - this.$dropdown.height() / 2);
+		},
 
         select: function (item) {
             this.editor.focus();
